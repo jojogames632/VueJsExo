@@ -10,7 +10,7 @@
 	<style>
 		input {
 			width: 80%;
-			height: 50px;
+			height: 40px;
 		}
 
 		textArea {
@@ -18,13 +18,15 @@
 		}
 
 		form, #recapContainer {
-			background-color: rgb(227, 225, 225);
+			background-color: rgb(245, 245, 245);
 			border-radius: 10px;
-			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)
+			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			border: 1px solid gray;
 		}
 
 		#recapContainer {
 			max-height: 400px;
+			overflow-y: scroll;
 		}
 		
 		#recap {
@@ -41,22 +43,30 @@
 	<div id="app">
 		<div class="container-fluid">
 			<div class="row d-flex justify-content-center">
-				<form class="col-5 mt-5 p-4">
+				<form class="col-5 mt-5 p-4" v-on:submit.prevent="checkForm" novalidate>
 					<h2 class="text-center mb-4">Inscription chez Dedalus</h2>
+
 					<div class="d-flex justify-content-between align-items-center mb-3">
 						<label for="name">Nom et prénom</label>
-						<input type="text" id="name" placeholder="Nom + prénom" />
+						<input type="text" id="name" v-model="name.value" v-on:input="checkName" />
 					</div>
-					<div class="d-flex justify-content-between align-items-center mb-3">
-						<label for="email">Adresse email</label>
-						<input type="text" id="email" placeholder="Adresse email" />
-					</div>
-					<div class="d-flex align-items-center justify-content-between">
-						<span>Message</span>
-						<textarea id="message" name="message" rows="6">
 
-						</textarea>
+					<p v-show="!name.valid" class="text-danger">Veuillez renseigner votre nom et prénom</p>
+
+					<div class="d-flex justify-content-between align-items-center mb-4">
+						<label for="email">Adresse email</label>
+						<input type="text" id="email" v-model="email.value" v-on:input="checkEmail" />
 					</div>
+
+					<p v-show="!email.valid" class="text-danger my-2">L'adresse email est invalide</p>
+
+					<div class="d-flex justify-content-between">
+						<span>Message</span>
+						<textarea id="message" name="message" v-model="message.value" v-on:input="checkMessage" rows="6"></textarea>
+					</div>
+
+					<p v-show="!message.valid" class="text-danger mt-2">Veuillez écrire un message</p>
+					
 					<div class="text-center mt-3">
 						<button type="submit" class="btn btn-primary">Envoyer</button>
 					</div>
@@ -65,9 +75,9 @@
 			<div class="row d-flex justify-content-center mt-3">
 				<div class="col-5 p-4" id="recapContainer">
 					<div id="recap" class="p-4">
-						<p>Nom et prénom : </p>
-						<p>Adresse électronique : </p>
-						<p>Message : </p>
+						<p>Nom et prénom : {{ recapName }}</p>
+						<p>Adresse électronique : {{ recapEmail }}</p>
+						<p>Message : <br> {{ recapMessage }}</p>
 					</div>
 				</div>
 			</div>
@@ -75,10 +85,51 @@
 	</div>
 
 	<script>
+		const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 		const vm = Vue.createApp({
 			data() {
 				return {
-					message: 'Hello world !'
+					name: {
+						value: '',
+						valid: true
+					},
+					email: {
+						value: '',
+						valid: true
+					},
+					message: {
+						valid: true
+					},
+					recapName: '',
+					recapEmail: '',
+					recapMessage: '',
+				}
+			},
+			methods: {
+				checkName() {
+					this.name.valid = this.name.value ? true : false
+				},
+				checkEmail() {
+					this.email.valid = (this.email.value && emailRegex.test(this.email.value)) ? true : false
+				},
+				checkMessage(message) {
+					this.message.valid = this.message.value ? true : false
+				},
+				checkForm() {
+					this.checkName();
+					this.checkEmail();
+					this.checkMessage();
+
+					if (this.name.valid && this.email.valid && this.message.valid) {
+						this.recapName = this.name.value
+						this.name.value = ''
+
+						this.recapEmail = this.email.value
+						this.email.value = ''
+
+						this.recapMessage = this.message.value
+						this.message.value = ''
+					}
 				}
 			}
 		}).mount('#app')

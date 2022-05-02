@@ -58,7 +58,7 @@
 						<input type="text" id="email" v-model="email.value" v-on:input="checkEmail" />
 					</div>
 
-					<p v-show="!email.valid" class="text-danger my-2">L'adresse email est invalide</p>
+					<p v-show="!email.valid" class="text-danger mb-4">L'adresse email est invalide</p>
 
 					<div class="d-flex justify-content-between">
 						<span>Message</span>
@@ -75,9 +75,9 @@
 			<div class="row d-flex justify-content-center mt-3">
 				<div class="col-5 p-4" id="recapContainer">
 					<div id="recap" class="p-4">
-						<p>Nom et prénom : {{ recapName }}</p>
-						<p>Adresse électronique : {{ recapEmail }}</p>
-						<p>Message : <br> {{ recapMessage }}</p>
+						<p><strong>Nom et prénom :</strong> {{ recapName }}</p>
+						<p><strong>Adresse électronique :</strong> {{ recapEmail }}</p>
+						<p><strong>Message :</strong> <br> {{ recapMessage }}</p>
 					</div>
 				</div>
 			</div>
